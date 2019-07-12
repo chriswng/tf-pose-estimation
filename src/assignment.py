@@ -4,6 +4,7 @@ import time
 
 import cv2
 import numpy as np
+import pandas as pd
 
 import common
 from estimator import TfPoseEstimator
@@ -11,9 +12,9 @@ from networks import get_graph_path, model_wh
 
 import platform
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
 
-logger = logging.getLogger('TfPoseEstimator-WebCam')
+logger = logging.getLogger('TfPoseEstimator-WebCam') 
 logger.setLevel(logging.CRITICAL)
 ch = logging.StreamHandler()
 ch.setLevel(logging.CRITICAL)
@@ -23,6 +24,8 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 fps_time = 0
+
+    
 
 #
 POSE_COCO_BODY_PARTS = {
@@ -54,6 +57,17 @@ def hail_taxi(img):
                     (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (94, 218, 255), 2)
     cv2.putText(img, platform.uname().node,
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+def get_body_part_coord(bodypart, coord):
+    """
+    This function returns the x or y coord of a specified body type.
+    Enter bodypart and coord as strings.
+    e.g. bodypart = "RAnkle", coord = "x"
+    """
+    df_row = df[df["Body Part"] == bodypart]
+    
+    if not df_row.empty:
+        return float(df_row[coord])
 
 if __name__ == '__main__':
     # arguements to your program
@@ -106,10 +120,19 @@ if __name__ == '__main__':
 
             # TODO ensure it only does this when someone is hailing a taxi.
             # That is, an arm is above their head.
-            hail_taxi(image)
+
+            df = pd.DataFrame([(POSE_COCO_BODY_PARTS[k], v.x, v.y) for k,v in human.body_parts.items()])
+            df.columns = ["Body Part", "x", "y"]
+            
+            try:
+                if get_body_part_coord("RWrist", "y") < get_body_part_coord("Nose", "y") or \
+                   get_body_part_coord("LWrist", "y") < get_body_part_coord("Nose", "y"):
+                    hail_taxi(image)
+            except:
+                print("")
 
             # Debugging statement: remove before demonstration.
-            # print([(POSE_COCO_BODY_PARTS[k], v.x, v.y) for k,v in human.body_parts.items()])
+            # print([(POSE_COCO_BODY_PARTS[0], v.x, v.y) for k,v in human.body_parts.items()])
 
         # drawing lines on an image
         image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
