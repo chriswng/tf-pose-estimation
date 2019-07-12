@@ -5,7 +5,6 @@ import time
 import cv2
 import pandas as pd
 import numpy as np
-import pandas as pd
 
 import common
 from estimator import TfPoseEstimator
@@ -53,7 +52,7 @@ POSE_COCO_BODY_PARTS = {
 def hail_taxi(img):
     print("Someone is hailing a taxi!")
     cv2.putText(img, "TAXI!",
-                    (10, 500), cv2.FONT_HERSHEY_SIMPLEX, 18, (94, 218, 255), 2)
+                    (10, 500), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 15, (94, 218, 255), 2)
     cv2.putText(img, platform.uname().node,
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
@@ -124,8 +123,8 @@ if __name__ == '__main__':
             df.columns = ["Body Part", "x", "y"]
             
             try:
-                if get_body_part_coord("RWrist", "y") < get_body_part_coord("Nose", "y") or \
-                   get_body_part_coord("LWrist", "y") < get_body_part_coord("Nose", "y"):
+                if get_body_part_coord("RWrist", "y") < get_body_part_coord("Neck", "y") or \
+                   get_body_part_coord("LWrist", "y") < get_body_part_coord("Neck", "y"):
                     hail_taxi(image)
             except:
                 print("")
