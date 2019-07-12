@@ -3,6 +3,7 @@ import logging
 import time
 
 import cv2
+import pandas as pd
 import numpy as np
 
 import common
@@ -51,7 +52,7 @@ POSE_COCO_BODY_PARTS = {
 def hail_taxi(img):
     print("Someone is hailing a taxi!")
     cv2.putText(img, "TAXI!",
-                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (94, 218, 255), 2)
+                    (10, 500), cv2.FONT_HERSHEY_SIMPLEX, 18, (94, 218, 255), 2)
     cv2.putText(img, platform.uname().node,
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
@@ -106,8 +107,76 @@ if __name__ == '__main__':
 
             # TODO ensure it only does this when someone is hailing a taxi.
             # That is, an arm is above their head.
-            hail_taxi(image)
+            #if POSE_COCO_BODY_PARTS[4]> POSE_COCO_BODY_PARTS[0]:
+                #hail_taxi(image)
+            output = pd.DataFrame([(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()])
+            output.columns = ["Body Part", "y-coord"]
+            
+            try:
+                Nosedf = output[output['Body Part'] == 'Nose']
+                if not Nosedf.empty:
+                    noseheight = float(Nosedf.iloc[:,1])
+                    print(noseheight)
+            except:
+                pass
+            try:
+                RWristdf = output[output['Body Part'] == 'RWrist']
+                if not RWristdf.empty:
+                    RWristHeight = float(RWristdf.iloc[:,1])
+                    print(RWristHeight)
+            except:
+                pass
 
+            try:
+                LWristdf = output[output['Body Part'] == 'LWrist']
+                if not LWristdf.empty:
+                    LWristHeight = float(LWristdf.iloc[:,1])
+                    print(RWristHeight)
+            except:
+                pass
+
+            if RWristHeight < noseheight or LWristHeight < noseheight:
+                     hail_taxi(image)
+            # except:
+            #     pass
+            # RWristdf = output[output['Body Part'] == 'RWrist']
+            # try:
+            #     RWristHeight = float(RWristdf.iloc[:,1])
+            #     print(RWristHeight)
+            # except:
+            #     pass
+            # LWrist = output[output['Body Part'] == 'LWrist']
+            # try:
+            #     LWristHeight = float(LWristdf.iloc[:,1])
+            #     print(LWristHeight)
+            # except:
+            #     pass
+            # try:
+            #     if LWristHeight < noseheight or RWristHeight < noseheight:
+            #         hail_taxi(image)
+            # except:
+            #     pass
+            # print(output[output['Body Part'] == 'LWrist'])
+            # print(output[output['Body Part'] == 'Nose'])
+            # x = (output['y-coord'].where(df['Body Part'] = 'Nose')
+            # if y == True:
+            #     if y <yb:
+            #         print('yeet')
+            #     else:
+            #         print('No Dice')
+                
+            #print(output)
+            # print([(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][1])
+            # print([(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][2])
+            # print([(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][3])
+            # print([(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][4])
+
+            # if [(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][4][2] > [(POSE_COCO_BODY_PARTS[k], v.y) for k,v in human.body_parts.items()][0][2]:
+            #     hail_taxi(image)
+            # else: 
+            #     print("nada")
+            #if ([(POSE_COCO_BODY_PARTS[7], v.y) for k,v in human.body_parts.items()][7][1]) > ([(POSE_COCO_BODY_PARTS[0], v.y) for k,v in human.body_parts.items()][0][1]):
+                #hail_taxi(image)    
             # Debugging statement: remove before demonstration.
             # print([(POSE_COCO_BODY_PARTS[k], v.x, v.y) for k,v in human.body_parts.items()])
 
