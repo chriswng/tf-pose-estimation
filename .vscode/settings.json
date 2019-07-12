@@ -1,4 +1,8 @@
 {
     "python.linting.pylintEnabled": true,
+<<<<<<< HEAD
     "python.pythonPath": "/anaconda3/envs/assignment1/bin/python"
+=======
+    "python.pythonPath": "/Users/elijahesmero/anaconda3/envs/assignment1/bin/python"
+>>>>>>> f2e1fafd1c9dea1b3be001a5f78eecc97669c212
 }
