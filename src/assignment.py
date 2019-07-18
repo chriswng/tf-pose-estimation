@@ -3,6 +3,8 @@ import logging
 import time
 
 import cv2
+#we chose to utilise pandas as practice for the second assigment
+# and also as a way to read the data more efficiently.
 import pandas as pd
 import numpy as np
 
@@ -53,6 +55,7 @@ def hail_taxi(img):
     print("Someone is hailing a taxi!")
     cv2.putText(img, "TAXI!",
                     (10, 500), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 15, (94, 218, 255), 2)
+                    #changed the font to be more dramatic
     cv2.putText(img, platform.uname().node,
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
@@ -120,14 +123,19 @@ if __name__ == '__main__':
             # That is, an arm is above their head.
 
             df = pd.DataFrame([(POSE_COCO_BODY_PARTS[k], v.x, v.y) for k,v in human.body_parts.items()])
+            #this creates a dataframe using pandas to read the co-ordinates 
+            #related to their parts in a way that was less chaotic
             df.columns = ["Body Part", "x", "y"]
-            
+            #assigning the columns from the dataframe variable names
             try:
                 if get_body_part_coord("RWrist", "y") < get_body_part_coord("Neck", "y") or \
                    get_body_part_coord("LWrist", "y") < get_body_part_coord("Neck", "y"):
                     hail_taxi(image)
+                #searches the relevant y for "Body Part" if it exists
+                #if the wrists are above the neck then it hails taxi
             except:
                 print("")
+            #except line exists so to prevent failure when the called upon body parts arent in frame
 
             
         # drawing lines on an image
