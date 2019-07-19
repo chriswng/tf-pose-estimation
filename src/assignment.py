@@ -131,10 +131,16 @@ if __name__ == '__main__':
             lw = get_body_part_coord("LWrist", "y")
             ne = get_body_part_coord("Neck", "y")
             try:
-                if (rw or lw) < ne: #fixes problem we had with second arm not working by refactoring.
+                if (rw) < ne: 
                     hail_taxi(image)
                 #searches the relevant y for "Body Part" if it exists
                 #if the wrists are above the neck then it hails taxi
+            except: #except line exists so to prevent failure when called upon body parts aren't in frame
+                print("")
+
+            try: #split up into 2 try-excepts to avoid None affecting ifs
+                if (lw) < ne: 
+                    hail_taxi(image)
             except:
                 print("")
             #except line exists so to prevent failure when the called upon body parts arent in frame
