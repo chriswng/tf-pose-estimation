@@ -67,7 +67,7 @@ def get_body_part_coord(bodypart, coord):
     """
     df_row = df[df["Body Part"] == bodypart]
     
-    if not df_row.empty:
+    if not df_row.empty: # prevents an error when a body part is not visible (cannot convert "None" to float )
         return float(df_row[coord])
 
 if __name__ == '__main__':
@@ -127,9 +127,11 @@ if __name__ == '__main__':
             #related to their parts in a way that was less chaotic
             df.columns = ["Body Part", "x", "y"]
             #assigning the columns from the dataframe variable names
+            rw = get_body_part_coord("RWrist", "y")
+            lw = get_body_part_coord("LWrist", "y")
+            ne = get_body_part_coord("Neck", "y")
             try:
-                if get_body_part_coord("RWrist", "y") < get_body_part_coord("Neck", "y") or \
-                   get_body_part_coord("LWrist", "y") < get_body_part_coord("Neck", "y"):
+                if (rw or lw) < ne: #fixes problem we had with second arm not working by refactoring.
                     hail_taxi(image)
                 #searches the relevant y for "Body Part" if it exists
                 #if the wrists are above the neck then it hails taxi
